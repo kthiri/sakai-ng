@@ -1,4 +1,5 @@
 export class Client {
+    public id!:number
     private nom!:string;
     private email!:string;
     private cin!:string;
@@ -8,3 +9,5 @@ export class Client {
     private created!:Date;
     private updated!:Date;
 }
+
+

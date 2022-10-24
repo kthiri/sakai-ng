@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Client } from '../classes/client';
+import { ClientInterface } from '../classes/client-interface';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class ClientServiceService {
 
   
   
-  AddClient(client: Client): Observable<any> {
+ public AddClient(client: ClientInterface): Observable<any> {
     return this.httpClient.post<Client>(this.baseUrl, client);    
   }
   /*
@@ -50,12 +51,12 @@ export class ClientServiceService {
     const productUrl = `${this.baseUrl}/${theProductId}`;
     return this.httpClient.put<Client>(productUrl, product);    
   }
-  
+  */
   DeleteClient(theProductId:number){
     const productUrl = `${this.baseUrl}/${theProductId}`;
     return this.httpClient.delete(productUrl);
   }
- */
+ 
   
 
 

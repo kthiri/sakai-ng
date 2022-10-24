@@ -5,12 +5,16 @@ import { Table } from 'primeng/table';
 import { ProductService } from 'src/app/demo/service/product.service';
 import { ClientServiceService } from 'src/app/sevices/client-service.service';
 import { Client } from 'src/app/classes/client';
+import { ClientInterface } from 'src/app/classes/client-interface';
+import { CountryService } from 'src/app/demo/service/country.service';
 
 @Component({
     templateUrl: './crud.component.html',
     providers: [MessageService]
 })
 export class CrudComponent implements OnInit {
+    selectedCountryAdvanced: any[] = [];
+
 
     productDialog: boolean = false;
 
@@ -20,7 +24,7 @@ export class CrudComponent implements OnInit {
 
     products: Client[] = [];
 
-    product: Product = {};
+    product: ClientInterface = {};
 
     selectedProducts: Product[] = [];
 
@@ -32,12 +36,20 @@ export class CrudComponent implements OnInit {
 
     rowsPerPageOptions = [5, 10, 20];
 
-    constructor(private productService: ProductService, private clientService:ClientServiceService, private messageService: MessageService) { }
+    countries: any[] = [];
+    selectedMulti: any[] = [];
+    filteredCountries: any[] = [];
+
+    constructor(private countryService: CountryService,private productService: ProductService, private clientService:ClientServiceService, private messageService: MessageService) { }
 
     ngOnInit() {
+        this.countryService.getCountries().then(countries => {
+            this.countries = countries;
+        });
         this.clientService.getClients().subscribe(data => this.products = data);
 
         this.cols = [
+            {field:'id', header:"ID"},
             { field: 'nom', header: 'Name' },
             { field: 'email', header: 'Email' },
             { field: 'cin', header: 'CIN' },
@@ -45,11 +57,7 @@ export class CrudComponent implements OnInit {
             { field: 'country', header: 'Country' }
         ];
 
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
-        ];
+        
     }
 
     openNew() {
@@ -62,14 +70,15 @@ export class CrudComponent implements OnInit {
         this.deleteProductsDialog = true;
     }
 
-    editProduct(product: Product) {
+    editProduct(product: ClientInterface) {
         this.product = { ...product };
         this.productDialog = true;
     }
 
-    deleteProduct(product: Product) {
+    deleteProduct(product: ClientInterface) {
         this.deleteProductDialog = true;
         this.product = { ...product };
+
     }
 
     confirmDeleteSelected() {
@@ -81,10 +90,13 @@ export class CrudComponent implements OnInit {
     }
 
     confirmDelete() {
-      /*  this.deleteProductDialog = false;
+        this.deleteProductDialog = false;
         this.products = this.products.filter(val => val.id !== this.product.id);
+        this.clientService.DeleteClient(this.product.id!).subscribe(res=>{
+            console.log("deleted successfully");
+        })
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {}; */
+        this.product = {}; 
     }
 
     hideDialog() {
@@ -93,6 +105,41 @@ export class CrudComponent implements OnInit {
     }
 
     saveProduct() {
+        this.submitted = false;
+
+        this.submitted = true;
+
+        if (this.product.nom?.trim()) {
+            if (this.product.id) {
+                // @ts-ignore
+                this.products[this.findIndexById(this.product.id)] = this.product;
+                this.clientService.AddClient(this.product).subscribe(data=>{
+                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
+                    console.log("success");
+        
+                    this.productDialog = false;
+                    
+        
+                })
+               
+            } else {
+                this.clientService.AddClient(this.product).subscribe(data=>{
+                    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Added', life: 3000 });
+                    console.log("success");
+        
+                    this.productDialog = false;
+                    
+        
+                })
+            }
+
+            this.products = [...this.products];
+            this.productDialog = false;
+            this.product = {};
+        }
+
+
+        
      /*   this.submitted = true;
 
         if (this.product.name?.trim()) {
@@ -142,6 +189,19 @@ export class CrudComponent implements OnInit {
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
    
+    }
+
+    filterCountry(event: any) {
+        const filtered: any[] = [];
+        const query = event.query;
+        for (let i = 0; i < this.countries.length; i++) {
+            const country = this.countries[i];
+            if (country.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+                filtered.push(country);
+            }
+        }
+
+        this.filteredCountries = filtered;
     }
     
 }
