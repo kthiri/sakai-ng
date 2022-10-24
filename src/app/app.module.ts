@@ -11,10 +11,11 @@ import { EventService } from './demo/service/event.service';
 import { IconService } from './demo/service/icon.service';
 import { NodeService } from './demo/service/node.service';
 import { PhotoService } from './demo/service/photo.service';
+import { BankAccountComponent } from './demo/pages/bank-account/bank-account.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent
+        AppComponent, NotfoundComponent, BankAccountComponent
     ],
     imports: [
         AppRoutingModule,

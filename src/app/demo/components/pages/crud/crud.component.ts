@@ -3,6 +3,8 @@ import { Product } from 'src/app/demo/api/product';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ProductService } from 'src/app/demo/service/product.service';
+import { ClientServiceService } from 'src/app/sevices/client-service.service';
+import { Client } from 'src/app/classes/client';
 
 @Component({
     templateUrl: './crud.component.html',
@@ -16,7 +18,7 @@ export class CrudComponent implements OnInit {
 
     deleteProductsDialog: boolean = false;
 
-    products: Product[] = [];
+    products: Client[] = [];
 
     product: Product = {};
 
@@ -30,17 +32,17 @@ export class CrudComponent implements OnInit {
 
     rowsPerPageOptions = [5, 10, 20];
 
-    constructor(private productService: ProductService, private messageService: MessageService) { }
+    constructor(private productService: ProductService, private clientService:ClientServiceService, private messageService: MessageService) { }
 
     ngOnInit() {
-        this.productService.getProducts().then(data => this.products = data);
+        this.clientService.getClients().subscribe(data => this.products = data);
 
         this.cols = [
-            { field: 'product', header: 'Product' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' },
-            { field: 'rating', header: 'Reviews' },
-            { field: 'inventoryStatus', header: 'Status' }
+            { field: 'nom', header: 'Name' },
+            { field: 'email', header: 'Email' },
+            { field: 'cin', header: 'CIN' },
+            { field: 'address', header: 'Address' },
+            { field: 'country', header: 'Country' }
         ];
 
         this.statuses = [
@@ -71,17 +73,18 @@ export class CrudComponent implements OnInit {
     }
 
     confirmDeleteSelected() {
+        /*
         this.deleteProductsDialog = false;
         this.products = this.products.filter(val => !this.selectedProducts.includes(val));
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-        this.selectedProducts = [];
+        this.selectedProducts = [];*/
     }
 
     confirmDelete() {
-        this.deleteProductDialog = false;
+      /*  this.deleteProductDialog = false;
         this.products = this.products.filter(val => val.id !== this.product.id);
         this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-        this.product = {};
+        this.product = {}; */
     }
 
     hideDialog() {
@@ -90,7 +93,7 @@ export class CrudComponent implements OnInit {
     }
 
     saveProduct() {
-        this.submitted = true;
+     /*   this.submitted = true;
 
         if (this.product.name?.trim()) {
             if (this.product.id) {
@@ -111,11 +114,11 @@ export class CrudComponent implements OnInit {
             this.products = [...this.products];
             this.productDialog = false;
             this.product = {};
-        }
+        */
     }
 
     findIndexById(id: string): number {
-        let index = -1;
+     /*   let index = -1;
         for (let i = 0; i < this.products.length; i++) {
             if (this.products[i].id === id) {
                 index = i;
@@ -132,10 +135,13 @@ export class CrudComponent implements OnInit {
         for (let i = 0; i < 5; i++) {
             id += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        return id;
+        return id; */
+         return 1;
     }
 
     onGlobalFilter(table: Table, event: Event) {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+   
     }
+    
 }
